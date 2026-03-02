@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+.vscode/
+.ipynb_checkpoints/
+# data files (keep if you want to track small example data)
+# data/
