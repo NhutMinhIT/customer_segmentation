@@ -312,7 +312,7 @@ To determine the appropriate number of clusters, both the \textbf{Elbow Method} 
 
 The Elbow Method plots the Within-Cluster Sum of Squares (WCSS) against different values of $K$. The optimal $K$ corresponds to the ``elbow'' point where the rate of WCSS decrease slows significantly. The Silhouette Score measures cluster cohesion and separation, and is plotted to identify the $K$ that maximizes this metric.
 
-Figure~\ref{fig:optk} shows both charts. The WCSS curve exhibits a clear elbow at $K = 5$, while the Silhouette chart also indicates $K = 5$ as a strong candidate in the context of domain interpretability. Based on these analyses, $K = 5$ is selected for both clustering models.
+Figure~\ref{fig:optk} shows both charts. The WCSS curve exhibits a clear elbow at $K = 5$. The Silhouette Score reaches its global maximum at $K = 7$ (score = 0.4234); however, the improvement over $K = 5$ (score = 0.4105) is marginal, and the scatter plot in Figure~\ref{fig:corr} visually reveals five natural groupings in the Income--Spending Score space. Considering both the Elbow criterion and domain interpretability, $K = 5$ is selected for both clustering models.
 
 \begin{figure}[H]
     \centering
@@ -382,7 +382,7 @@ Figure~\ref{fig:hierscatter} shows the hierarchical clustering result using the 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/fig_07.png}
-    \caption{Hierarchical clustering result: Income vs.\ Spending Score (left) and PCA 2D projection (right)}
+    \caption{Hierarchical clustering result: Income vs.\ Spending Score (left) and PCA 2D projection (right). PCA axes are identical to Figure~\ref{fig:kmeanspca} (PC1: 49.5\%, PC2: 28.9\%)}
     \label{fig:hierscatter}
 \end{figure}
 
@@ -550,15 +550,18 @@ Figure~\ref{fig:finalsegments} shows the final segmentation result with each clu
 
 \subsection{Business Insight}
 
-Based on the clustering results, five distinct customer segments were identified:
+Based on the clustering results, six business segments were identified from five K-Means clusters:
 
 \begin{itemize}
     \item \textbf{High Income -- High Spending (VIP)}: Top-priority customers for premium loyalty programs and exclusive offers.
     \item \textbf{Low Income -- High Spending (Impulsive)}: Highly responsive to flash sales, limited-time offers, and FOMO marketing.
     \item \textbf{High Income -- Low Spending (Conservative)}: Untapped premium segment; can be activated through personalized value propositions.
     \item \textbf{Low Income -- Low Spending (Cautious)}: Price-sensitive group; best targeted through value-for-money promotions.
-    \item \textbf{Middle Income -- Middle Spending (Standard)}: Core customer group; suitable for standard upsell and membership programs.
+    \item \textbf{Middle Income -- Middle Spending, Mature (Standard -- Older)}: Core group of older customers (mean age $\approx 56$, $n = 58$); suitable for loyalty card programs and convenience-oriented promotions.
+    \item \textbf{Middle Income -- Middle Spending, Young (Standard -- Younger)}: Core group of younger customers (mean age $\approx 28$, $n = 46$); suitable for digital engagement, upsell campaigns, and membership programs.
 \end{itemize}
+
+\noindent\textit{Note: Although both Standard segments share similar income and spending levels, they form two distinct clusters primarily differentiated by age, and are therefore treated separately in the segmentation output.}
 
 By leveraging these insights, the shopping mall can implement more effective and data-driven marketing strategies tailored to each segment's behavior and financial profile.
 
@@ -570,7 +573,7 @@ By leveraging these insights, the shopping mall can implement more effective and
 
 This project applied unsupervised machine learning techniques to perform customer segmentation on the Mall Customers dataset. The objective was to group 200 customers into meaningful segments based on demographic and behavioral features, including Age, Annual Income, and Spending Score, augmented by the derived feature Spending\_Score\_Per\_Income.
 
-Two clustering algorithms were evaluated: K-Means and Hierarchical Clustering (Agglomerative, Ward linkage), both configured at $K = 5$ clusters as determined by the Elbow Method, Silhouette Score analysis, and dendrogram inspection.
+Two clustering algorithms were evaluated: K-Means and Hierarchical Clustering (Agglomerative, Ward linkage), both configured at $K = 5$ clusters. The value $K = 5$ was selected based on the Elbow Method (clear inflection point at $K = 5$) and visual inspection of natural groupings in the scatter plot, despite the Silhouette Score reaching its global maximum at $K = 7$ (0.4234 vs.\ 0.4105 at $K = 5$) -- a marginal gain that was deemed insufficient to justify the additional segmentation complexity.
 
 The key findings are as follows:
 
@@ -578,7 +581,7 @@ The key findings are as follows:
     \item K-Means achieved a higher Silhouette Score (0.4105 vs.\ 0.3788), indicating more compact and internally consistent clusters.
     \item Hierarchical Clustering achieved a marginally lower Davies-Bouldin Index (0.8393 vs.\ 0.8508), reflecting slightly better inter-cluster separability on that metric.
     \item Both methods produced highly consistent segmentation results, as confirmed by an ARI of 0.7726 and NMI of 0.8473.
-    \item Five distinct customer segments were identified: VIP, Impulsive, Conservative, Cautious, and Standard customers.
+    \item Six distinct customer segments were identified from five K-Means clusters: VIP, Impulsive, Conservative, Cautious, Standard (Older), and Standard (Younger) -- with the two Standard sub-groups differentiated primarily by age (mean age $\approx 56$ vs.\ $\approx 28$).
 \end{itemize}
 
 \subsection{Model Selection}
@@ -587,14 +590,15 @@ K-Means is selected as the final model due to its higher Silhouette Score, well-
 
 \subsection{Business Implications}
 
-The five identified segments provide actionable insights for the mall management:
+The six identified segments (derived from five K-Means clusters) provide actionable insights for the mall management:
 
 \begin{itemize}
     \item The VIP segment should be prioritized for exclusive loyalty programs and premium offerings.
     \item The Impulsive segment responds well to time-limited promotions and urgency-based marketing.
     \item The Conservative segment represents an untapped premium opportunity that can be activated through personalized value propositions.
     \item The Cautious segment requires value-driven communication and cost-effective promotions.
-    \item The Standard segment, being the largest core group, is well-suited for standard membership programs and general upselling.
+    \item The Standard (Older) segment, comprising the largest single cluster ($n = 58$), benefits from convenience-oriented loyalty programs tailored to mature shoppers.
+    \item The Standard (Younger) segment ($n = 46$) is well-suited for digital engagement channels, upsell campaigns, and general membership programs.
 \end{itemize}
 
 By deploying data-driven segmentation, the organization can move away from one-size-fits-all marketing and instead allocate its budget more precisely across segments that differ in financial capacity and behavioral propensity.
