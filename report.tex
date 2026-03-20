@@ -306,6 +306,51 @@ In this project, two clustering algorithms are applied:
 
 These algorithms are widely used for customer segmentation because they can effectively discover natural groupings in data.
 
+\subsection{Data Leakage Prevention}
+
+Before training the clustering models, it is crucial to address potential data leakage issues that could compromise model validity and customer privacy. In the context of customer segmentation, several types of information leakage must be considered:
+
+\textbf{Feature Engineering Leakage}
+
+When creating the derived feature \texttt{Spending\_Score\_Per\_Income}, care must be taken to ensure that no future information or target-related data influences the feature construction. Since this is an unsupervised learning task, there is no explicit target variable; however, the derived feature must be computed using only information that would be available at the time of customer classification in a real deployment scenario.
+
+\textbf{Data Preprocessing Leakage}
+
+A common source of data leakage occurs during the standardization process. The statistics used for scaling (mean $\mu$ and standard deviation $\sigma$) must be computed using only the training data. In this project, since we are performing exploratory clustering on the entire dataset, the scaling parameters are calculated from the complete dataset. However, in a production environment where new customers would be classified using the trained model, the scaling parameters from the original training set must be preserved and applied to new data points.
+
+The standardization formula applied is:
+\[
+z = \frac{x - \mu_{\text{train}}}{\sigma_{\text{train}}}
+\]
+where $\mu_{\text{train}}$ and $\sigma_{\text{train}}$ are computed exclusively from the training data.
+
+\textbf{Temporal Information Leakage}
+
+Although the current dataset does not contain temporal features, in real-world customer segmentation scenarios, care must be taken to ensure that future information (e.g., future purchase behavior, seasonal trends) does not leak into the features used for current customer classification.
+
+\textbf{Privacy Preservation}
+
+Customer segmentation involves processing sensitive personal and financial information. To mitigate privacy risks:
+
+\begin{itemize}
+    \item Customer identifiers (\texttt{CustomerID}) are removed from the clustering process.
+    \item The model focuses on behavioral patterns rather than individual identification.
+    \item Clustering results should be aggregated at the segment level to prevent individual customer re-identification.
+    \item In production deployments, additional privacy-preserving techniques such as differential privacy or k-anonymity may be required.
+\end{itemize}
+
+\textbf{Validation Methodology}
+
+Since clustering is unsupervised, traditional train-test splits are not directly applicable. However, to validate model stability and prevent overfitting to specific data characteristics:
+
+\begin{itemize}
+    \item Multiple random initializations are used for K-Means to ensure convergence consistency.
+    \item Cluster validity is assessed using multiple internal validation metrics.
+    \item Cross-validation techniques such as stability analysis across data subsamples could be employed in more extensive studies.
+\end{itemize}
+
+By addressing these leakage concerns, the clustering model maintains its integrity for both analytical insights and potential production deployment while protecting customer privacy throughout the segmentation process.
+
 \subsection{Determining the Optimal Number of Clusters}
 
 To determine the appropriate number of clusters, both the \textbf{Elbow Method} and the \textbf{Silhouette Score} are evaluated over $K \in \{2, \ldots, 10\}$.
